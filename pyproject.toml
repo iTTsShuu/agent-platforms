@@ -1,7 +1,26 @@
 [project]
 name = "agent-platforms"
 version = "0.1.0"
-description = "Add your description here"
+description = "尝试不同的agent框架"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "crewai>=0.150.0",
+]
+
+[project.scripts]
+crewai_demo = "crewai_demo.main:run"
+run_crew = "crewai_demo.main:run"
+train = "crewai_demo.main:train"
+replay = "crewai_demo.main:replay"
+test = "crewai_demo.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["crewai_demo/src/crewai_demo"]
+
+[tool.crewai]
+type = "crew"
