@@ -23,7 +23,7 @@ api_key = os.getenv("BAILIAN_API_KEY")
 base_url = os.getenv("BAILIAN_API_BASE_URL")
 
 llm = LLM(
-    model=model_name,
+    model="openai/"+model_name,
     api_key=api_key,
     base_url=base_url,
     enable_thinking=False
