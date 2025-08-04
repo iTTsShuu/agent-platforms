@@ -9,9 +9,15 @@ dependencies = [
     "langgraph>=0.2.0",
     "langchain[anthropic]>=0.2.0",
     "langchain-openai>=0.1.0",
-    "pydantic>=2.0.0",
     "autogen-agentchat>=0.7.1",
     "autogen-ext[openai]>=0.7.1",
+    "llama-index>=0.13.0",
+    "llama-index-llms-openai-like>=0.5.0",
+    "llama-index-llms-ollama>=0.7.0",
+    "llama-index-llms-dashscope>=0.5.0",
+    "pydantic-ai[logfire]>=0.4.11",
+    "pydantic>=2.11.7",
+    "pydantic-graph>=0.4.11",
 ]
 
 [project.scripts]
@@ -30,3 +36,8 @@ packages = ["crewai_demo/src/crewai_demo", "longgraph_demo"]
 
 [tool.crewai]
 type = "crew"
+
+[tool.uv.workspace]
+members = [
+    "llamaindex_demo",
+]

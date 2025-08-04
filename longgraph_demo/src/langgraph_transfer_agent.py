@@ -23,19 +23,6 @@ accounts_db = {
     "我": {"balance": 10000.0}
 }
 
-class TransferState(MessagesState):
-    """
-    转账状态，包含整个转账流程中需要追踪和传递的关键信息。
-    字段说明：
-    - to_account: 转入账户的标识
-    - amount: 转账金额
-    - success: 转账是否成功的标志
-    """
-    to_account: str
-    amount: float
-    info_collected: bool
-    success: bool
-
 # 工具函数1: 查询余额
 def get_balance(user_name: str) -> str:
     """
@@ -111,11 +98,6 @@ model = init_chat_model(
     extra_body={"enable_thinking": False}
 )
 
-#toolnode
-tools = ToolNode(tools=[get_balance,get_account,reply_to_user,execute_transfer])
-# 绑定工具
-model_with_tools = model.bind_tools([get_balance,get_account,reply_to_user,execute_transfer])
-
 # 构建系统提示
 transfer_prompt = """
 你是一个专业的银行转账助手，负责处理用户的转账请求。
@@ -134,6 +116,20 @@ transfer_prompt = """
 - 请与用户进行自然对话，逐步收集信息，确保转账安全准确
 - 当转账成功后，请发送"DONE"
 """
+# 关键的状态类
+class TransferState(MessagesState):
+    """
+    转账状态，包含整个转账流程中需要追踪和传递的关键信息。
+    字段说明：
+    - to_account: 转入账户的标识
+    - amount: 转账金额
+    """
+    to_account: str
+    amount: float
+#toolnode
+tools = ToolNode(tools=[get_balance,get_account,reply_to_user,execute_transfer])
+# 绑定工具
+model_with_tools = model.bind_tools([get_balance,get_account,reply_to_user,execute_transfer])
 
 def call_model_transfer(state: TransferState):
     """调用模型转账"""
@@ -158,7 +154,7 @@ def is_tool_call(state: TransferState):
     # 检查是否有工具调用
     if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
         return "tools"
-    if state["messages"][-1].content == "DONE":
+    if "DONE" in state["messages"][-1].content:
         return END
     return "user_input"
 
@@ -166,7 +162,6 @@ def is_tool_call(state: TransferState):
 def create_transfer_graph():
     """创建支持多轮聊天的转账流程图"""
     workflow = StateGraph(TransferState)
-    
     # 添加节点
     workflow.add_node("user_input", user_input)
     workflow.add_node("call_model_transfer", call_model_transfer)

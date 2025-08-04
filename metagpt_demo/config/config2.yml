@@ -1,5 +1,0 @@
-llm:
-  api_type: 'dashscope'
-  api_key: 'IfWZqv1F55hsRWlWB2fqCca91VK9IMET'
-  model: 'qwen3-30b-a3b'
-  base_url: 'http://103.154.31.78:20001/compatible-mode/v1'
