@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END, START,MessagesState
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import ToolNode, create_react_agent
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.tools import tool
 from pydantic import BaseModel
 import uuid
@@ -181,7 +182,8 @@ def create_transfer_graph():
             END: END,
         }
     )
-    return workflow.compile()
+    checkpointer = InMemorySaver()
+    return workflow.compile(checkpointer=checkpointer)
     # 添加条件边 - 完成转账后退出
     # workflow.add_conditional_edges(
     #     "call_model_transfer", 
@@ -195,9 +197,10 @@ def create_transfer_graph():
 
 transfer_graph = create_transfer_graph()
 transfer_graph.get_graph().draw_mermaid_png()
-result = transfer_graph.invoke({
-    "messages": []
-})
+result = transfer_graph.invoke(
+    {"messages": []},
+    {"configurable": {"thread_id": "1"}}
+)
 # initial_state = {
 #     "to_account": "",
 #     "amount": 0.0,

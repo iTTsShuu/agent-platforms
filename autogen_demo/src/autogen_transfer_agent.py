@@ -149,6 +149,7 @@ async def main():
     
     print("输入 'quit' 退出对话")
     print("=" * 50)
+    # 创建终止条件
     text_termination = TextMentionTermination("DONE")
     team = RoundRobinGroupChat([transfer_agent], termination_condition=text_termination)
     
@@ -162,7 +163,7 @@ async def main():
             if not user_input:
                 continue
             # 运行任务
-            await Console(team.run(task=user_input))  # 异步运行
+            await Console(team.run_stream(task=user_input))  # 异步运行
             
         except KeyboardInterrupt:
             print("\n再见！")
